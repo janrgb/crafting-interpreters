@@ -104,3 +104,4 @@ This is a reference for everything we need to know about implementing our flavor
 - Could we have a local variable with the same name as a global variable? And if so, how do we differentiate between the two?
 
 ### Sample Lox Programs
+- `jlox` seems to work fine but `clox` has an issue because Dart now has null safety features which Nystrom did not have to deal with when he wrote Crafting Interpreters. Either I downgrade or I fix every error. Probably will downgrade to check out `clox` at a later date.
