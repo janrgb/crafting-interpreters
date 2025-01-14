@@ -36,3 +36,10 @@
 - If we don't find the closing quote by the end of the file, we need to report an error.
 - We also need the actual string *value*, which we procure using `substring` to chop off the quotes.
 - <p style="color:cyan">We will add escape sequences at a later point! :red_circle: </p>
+### Number literals
+- We look for a digit to start the process. We consider fractional parts as well.
+- Defined pattern: **cannot** start with a "." or end with a ".".
+- We add another character of lookahead because we need to make sure there is a digit following any peek of ".".
+
+## Reserved Words and Identifiers
+

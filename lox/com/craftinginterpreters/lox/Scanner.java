@@ -79,10 +79,31 @@ public class Scanner {
             case '"': string(); break;
 
             /* Let's make sure we're sending errors where we see them. */
+            /* We've also relegated digit finding to the default case. */
             default:
-                Lox.error(line, "Unexpected character.");
+                if (isDigit(c)) {
+                    number();
+                } else {
+                    Lox.error(line, "Unexpected character.");
+                }
                 break;
         }
+    }
+
+    /* Method for dealing with number literals. */
+    private void number() {
+        while (isDigit(peek())) advance();
+
+        /* Look out for fractional part. */
+        if (peek() == '.' && isDigit(peekNext())) {
+            /* Consume the "." */
+            advance();
+
+            while (isDigit(peek())) advance();
+        }
+
+        addToken(TokenType.NUMBER,
+            Double.parseDouble(source.substring(start, current)));
     }
 
     /* Method for dealing with string literals. */
@@ -102,7 +123,7 @@ public class Scanner {
 
         /* Trim the surrounding quotes. */
         String value = source.substring(start + 1, current - 1);
-        addToken(STRING, value);
+        addToken(TokenType.STRING, value);
     }
 
     /* Method for double-char whammies. */
@@ -118,6 +139,17 @@ public class Scanner {
     private char peek() {
         if (isAtEnd()) return '\0';
         return source.charAt(current);
+    }
+
+    /* Lookahead +1. */
+    private char peekNext() {
+        if (current + 1  >= source.length()) return '\0';
+        return source.charAt(current + 1);
+    }
+
+    /* Digit utility. */
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     /* Helper. */
