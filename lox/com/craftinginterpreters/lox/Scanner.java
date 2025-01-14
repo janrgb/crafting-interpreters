@@ -81,7 +81,10 @@ public class Scanner {
                 if (match('/')) {
                     /* A comment goes until the enf of the line. */
                     while (peek() != '\n' && !isAtEnd()) advance();
-                } else {
+                } else if (match('*')) {
+                    multicomment();
+                }
+                else {
                     addToken(TokenType.SLASH);
                 }
                 break;
@@ -156,6 +159,29 @@ public class Scanner {
         /* Trim the surrounding quotes. */
         String value = source.substring(start + 1, current - 1);
         addToken(TokenType.STRING, value);
+    }
+
+    /* Method for dealing with multiline comments. */
+    private void multicomment() {
+        while ((peek() != '*' || peekNext() != '/') && !isAtEnd()) {
+            if (peek() == '/' && peekNext() == '*') {
+                advance();
+                advance();
+                multicomment();
+                if (isAtEnd()) break;
+            }
+            if (peek() == '\n') line++;
+            advance();
+        }
+
+        if (isAtEnd()) {
+            Lox.error(line, "Unterminated C-Style comment.");
+            return;
+        }
+
+        /* The closing signature. */
+        advance();
+        advance();
     }
 
     /* Method for double-char whammies. */
