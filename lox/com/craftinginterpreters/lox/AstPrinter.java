@@ -2,6 +2,7 @@ package com.craftinginterpreters.lox;
 
 class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
+        System.out.println("How many times printed?");
         return expr.accept(this);
     }
 
@@ -37,6 +38,7 @@ class AstPrinter implements Expr.Visitor<String> {
         }
         builder.append(")");
 
+        System.out.println("Called builder.toString()");
         return builder.toString();
     }
 

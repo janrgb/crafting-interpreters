@@ -57,4 +57,19 @@ operator    -> "==" | "!=" | "<" | "<=" | ">" | ">="
 
 ## A (Not Very) Pretty Printer
 ### AstPrinter Implementation
-- 
+- Since this implements our visitor interface, we can add printing operations for each subset of grammar we have so far.
+- We will need to update this as we add more supported grammar.
+
+## Challenges
+### No Syntactic Sugar
+- The general strategy is to just unlayer every rule in order like an onion.
+- This grammar encodes method calls and property access.
+### Functional Programming Complement to Visitor
+- We will tackle this at a later date after learning Haskell.
+### Reverse Polish Notation (RPN)
+- We will need a stack to keep track of all of our characters.
+- We will need to set some precedence rules.
+- We will remove from the stack and add to a string if the operator we are trying to add has a lower precedence than the topmost.
+- Literals are automatically added to the string. Parentheses are skipped.
+- When encountering a closing parenthetical, we dump the stack up until the closing parenthetical.
+- When encountering the end of the expression, we dump the stack.
