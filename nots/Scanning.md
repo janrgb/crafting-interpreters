@@ -42,4 +42,30 @@
 - We add another character of lookahead because we need to make sure there is a digit following any peek of ".".
 
 ## Reserved Words and Identifiers
+### Maximal Munch
+- We can't just match keywords like `or` the same way we might match `<=`. Consider the word `orca`.
+- We need a *rule*: whichever grammar rule matches the most characters wins.
+- So we begin by first assuming any lexeme starting with a letter/underscore is an **identifier**.
 
+## Challenges
+### Regular Grammars
+- Production rules of the form A -> aB or A -> Ba.
+- Python and Haskell require **context** to govern their code, such as indentation. This complexity cannot be captured by regular grammar rules: you would at least need a CFG.
+### Space Power
+- In CoffeeScript, parentheses around function calls are actually optional. BUT, *spaces* are used instead to separate arguments from the function name.
+    - `add 1, 2`
+- In C, spaces and newlines affect how macros work.
+    - `#define square(x) ((x) * (x))`
+- In Ruby, spaces distinguish between method calls.
+    - `Array.new(1,2)` passes two numbers.
+    - `Array.new (1,2)` passes a tuple! Yikes!
+### To Discard or Not to Discard
+- One thing I can think of personally is the parser using comments to offer suggestions for how to proceed with a particular block. Like using A.I. to fill in code based on user comments.
+- I believe TODOs are a good example as well. A language might be able to capture a listing of TODOs which it could print out at the beginning of every run to remind developers on what they need to target.
+### C-Style Block Comment Support
+- At first this seems difficult, but it's actually not that hard.
+- The main tool here is going to be **recursion**. We'll keep consuming characters when inside a block comment until we see the start of another block comment, in which we will call `multicomment()` again.
+- If we run out of characters to consume, we've failed at closing our comments in one way or another.
+- We need to make sure we test whether we're at the end of the file after returning from a recursive `multicomment()` so that we don't accidentally advance one more than we should.
+- You can see in the code that we advance *in pairs.* This is because two characters make up a block comment, a STAR and SLASH.
+- Honestly, this challenge combines a lot of concepts: two-character lookahead, recursion, and selective consumption.
