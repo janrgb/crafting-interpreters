@@ -56,6 +56,15 @@ public class Lox {
         hadError = true;
     }
 
+    /* Parse error handling. */
+    static void error (Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end ", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
+    }
+
     /* Our ACTUAL entrypoint. */
     private static void run (String source) {
         Scanner scanner = new Scanner(source);
