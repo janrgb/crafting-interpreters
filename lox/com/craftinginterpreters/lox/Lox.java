@@ -70,9 +70,16 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
-        /* Just print the tokens for now. */
+        /* Just print the tokens for now.
         for (Token token : tokens) {
             System.out.println(token);
-        }
+        } */
+
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+
+        /* Stop if there's a syntax error. */
+        if (hadError) return;
+        System.out.println(new AstPrinter().print(expression));
     }
 }
