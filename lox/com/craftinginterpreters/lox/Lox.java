@@ -59,7 +59,7 @@ public class Lox {
     /* Parse error handling. */
     static void error (Token token, String message) {
         if (token.type == TokenType.EOF) {
-            report(token.line, " at end ", message);
+            report(token.line, " at end", message);
         } else {
             report(token.line, " at '" + token.lexeme + "'", message);
         }
@@ -80,6 +80,7 @@ public class Lox {
 
         /* Stop if there's a syntax error. */
         if (hadError) return;
+        System.out.println("PRinting...");
         System.out.println(new AstPrinter().print(expression));
     }
 }

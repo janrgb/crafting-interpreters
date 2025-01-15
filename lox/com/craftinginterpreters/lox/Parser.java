@@ -3,7 +3,6 @@ package com.craftinginterpreters.lox;
 import java.util.List;
 
 class Parser {
-
     private static class ParseError extends RuntimeException {}
     private final List<Token> tokens;
     private int current = 0;
@@ -16,16 +15,33 @@ class Parser {
         try {
             return expression();
         } catch (ParseError error) {
+            System.out.println("Caught ParseError.");
             return null;
         }
     }
 
     private Expr expression() {
-        return equality();
+        System.out.println("Calling comma()");
+        return comma();
+    }
+
+    /* Match a comma OR ANYTHING OF HIGHER PRECEDENCE. */
+    private Expr comma() {
+        System.out.println("Calling equality()");
+        Expr expr = equality();
+
+        while (match(TokenType.COMMA)) {
+            Token operator = previous();
+            Expr right = equality();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
     }
 
     /* Match an equality OR ANYTHING OF HIGHER PRECEDENCE. */
     private Expr equality() {
+        System.out.println("Calling comparison()");
         Expr expr = comparison();
 
         /* Will not enter if we don't have a proper signature. */
@@ -40,8 +56,10 @@ class Parser {
 
     /* Match a comparison OR ANYTHING OF HIGHER PRECEDENCE. */
     private Expr comparison() {
+        System.out.println("Calling term()");
         Expr expr = term();
 
+        /* Will not enter if we don't have a proper signature. */
         while (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
             Token operator = previous();
             Expr right = term();
@@ -53,6 +71,7 @@ class Parser {
 
     /* Addition, Subtraction */
     private Expr term() {
+        System.out.println("Calling factor()");
         Expr expr = factor();
 
         while (match(TokenType.MINUS, TokenType.PLUS)) {
@@ -66,6 +85,7 @@ class Parser {
 
     /* Multiplication, Division */
     private Expr factor() {
+        System.out.println("Calling unary()");
         Expr expr = unary();
 
         while (match(TokenType.STAR, TokenType.SLASH)) {
@@ -85,10 +105,12 @@ class Parser {
             return new Expr.Unary(operator, right);
         }
 
+        System.out.println("Calling primary()");
         return primary();
     }
 
     private Expr primary() {
+        System.out.println("IN primary()");
         /* Explicit new Literals. */
         if (match(TokenType.FALSE)) return new Expr.Literal(false);
         if (match(TokenType.TRUE)) return new Expr.Literal(true);
@@ -96,6 +118,7 @@ class Parser {
 
         /* Any literal. */
         if (match(TokenType.NUMBER, TokenType.STRING)) {
+            System.out.println("This is a NUMBER so it should be here?");
             return new Expr.Literal(previous().literal);
         }
 
@@ -106,6 +129,7 @@ class Parser {
             return new Expr.Grouping(expr);
         }
 
+        System.out.println("Let's throw an error...");
         throw error(peek(), "Expect expression.");
     }
 
@@ -127,7 +151,7 @@ class Parser {
     }
 
     private boolean check(TokenType type) {
-        if (!isAtEnd()) return false;
+        if (isAtEnd()) return false;
         return peek().type == type;
     }
 
@@ -160,14 +184,14 @@ class Parser {
             if (previous().type == TokenType.SEMICOLON) return;
 
             switch (peek().type) {
-                case CLASS:
-                case FUN:
-                case VAR:
-                case FOR:
-                case IF:
-                case WHILE:
-                case PRINT:
-                case RETURN:
+                case TokenType.CLASS:
+                case TokenType.FUN:
+                case TokenType.VAR:
+                case TokenType.FOR:
+                case TokenType.IF:
+                case TokenType.WHILE:
+                case TokenType.PRINT:
+                case TokenType.RETURN:
                     return;
             }
 

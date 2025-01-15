@@ -137,8 +137,8 @@ public class Scanner {
             while (isDigit(peek())) advance();
         }
 
-        addToken(TokenType.NUMBER,
-            Double.parseDouble(source.substring(start, current)));
+        System.out.println("Calling addToken.");
+        addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, current)));
     }
 
     /* Method for dealing with string literals. */
@@ -239,6 +239,7 @@ public class Scanner {
     /* addToken overload 2 - for literals. */
     private void addToken(TokenType type, Object literal) {
         String text = source.substring(start, current);
+        System.out.println(literal);
         tokens.add(new Token(type, text, literal, line));
     }
 }
