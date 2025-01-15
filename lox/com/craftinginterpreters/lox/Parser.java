@@ -28,12 +28,35 @@ class Parser {
     /* Match a comma OR ANYTHING OF HIGHER PRECEDENCE. */
     private Expr comma() {
         System.out.println("Calling equality()");
-        Expr expr = equality();
+        Expr expr = ternary();
 
         while (match(TokenType.COMMA)) {
             Token operator = previous();
             Expr right = equality();
             expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
+    }
+    
+    /* Match a ternary OR ANYTHING OF HIGHER PRECEDENCE. */
+    private Expr ternary() {
+        System.out.println("Calling equality()");
+        Expr expr = equality();
+
+        /* Will not enter if we don't have a proper signature. */
+        if (match(TokenType.QUESTION)) {
+            Token operator = previous();
+            Expr right = expression();
+            expr = new Expr.Binary(expr, operator, right);
+            if (match(TokenType.COLON)) {
+                operator = previous();
+                right = expression();
+                expr = new Expr.Binary(expr, operator, right);
+            }
+            else {
+                throw error(peek(), "Expected colon");
+            }
         }
 
         return expr;

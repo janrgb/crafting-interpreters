@@ -80,7 +80,7 @@ public class Lox {
 
         /* Stop if there's a syntax error. */
         if (hadError) return;
-        System.out.println("PRinting...");
+        System.out.println("Printing...");
         System.out.println(new AstPrinter().print(expression));
     }
 }
